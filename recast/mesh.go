@@ -200,6 +200,9 @@ func diagonalLoose(i, j, n int32, verts []int32, indices []int64) bool {
 func triangulate(n int32, verts []int32, indices []int64, tris []int32) int32 {
 	var ntris int32
 	dst := tris
+	if n < 3 || len(indices) < int(n) || len(dst) < 3 {
+		return -ntris
+	}
 
 	// The last bit of the index is used to indicate if the vertex can be removed.
 	for i := int32(0); i < n; i++ {
@@ -300,6 +303,9 @@ func triangulate(n int32, verts []int32, indices []int64, tris []int32) int32 {
 	}
 
 	// Append the remaining triangle.
+	if n != 3 || len(indices) < 3 || len(dst) < 3 {
+		return -ntris
+	}
 	dst[0] = int32(indices[0] & 0x0fffffff)
 	dst[1] = int32(indices[1] & 0x0fffffff)
 	dst[2] = int32(indices[2] & 0x0fffffff)
@@ -684,6 +690,11 @@ func removeVertex(ctx *BuildContext, mesh *PolyMesh, rem uint16, maxTris int32) 
 		if !match {
 			break
 		}
+	}
+
+	if nhole < 3 {
+		ctx.Warningf("removeVertex: degenerate hole with %d vertices.", nhole)
+		return false
 	}
 
 	tris := make([]int32, nhole*3)

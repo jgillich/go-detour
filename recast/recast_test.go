@@ -254,6 +254,18 @@ func TestClearUnwalkableTriangles(t *testing.T) {
 	})
 }
 
+func TestTriangulateRejectsDegeneratePolygonWithoutPanicking(t *testing.T) {
+	verts := []int32{
+		0, 0, 0, 0,
+		1, 0, 0, 0,
+	}
+	indices := []int64{0, 1}
+	tris := make([]int32, 3)
+	if got := triangulate(2, verts, indices, tris); got > 0 {
+		t.Fatalf("triangulate returned %d, want non-positive for degenerate polygon", got)
+	}
+}
+
 func TestAddSpan(t *testing.T) {
 	verts := []float32{
 		1, 2, 3,
