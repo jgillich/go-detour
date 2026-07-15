@@ -1612,6 +1612,26 @@ func (m *NavMesh) IsValidPolyRef(ref PolyRef) bool {
 	return true
 }
 
+// ValidateLinks verifies that every polygon link refers to an existing polygon.
+// Call it after loading or assembling a static mesh before issuing queries.
+func (m *NavMesh) ValidateLinks() error {
+	for tileIndex := range m.Tiles {
+		tile := &m.Tiles[tileIndex]
+		if tile.Header == nil {
+			continue
+		}
+		for polyIndex := range tile.Polys {
+			for linkIndex := tile.Polys[polyIndex].FirstLink; linkIndex != nullLink; linkIndex = tile.Links[linkIndex].Next {
+				ref := tile.Links[linkIndex].Ref
+				if !m.IsValidPolyRef(ref) {
+					return fmt.Errorf("invalid polygon link from tile %d poly %d: ref=0x%x", tileIndex, polyIndex, ref)
+				}
+			}
+		}
+	}
+	return nil
+}
+
 // TileAndPolyByRef returns the tile and polygon for the specified polygon
 // reference.
 //
