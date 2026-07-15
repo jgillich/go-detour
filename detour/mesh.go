@@ -274,10 +274,10 @@ func (m *NavMesh) Init(params *NavMeshParams) Status {
 		m.saltBits = 32 - m.tileBits - m.polyBits
 	}
 
-	// Static navmeshes do not recycle tile references at runtime. Seven salt
-	// bits are sufficient for those meshes and leave a further bit available
-	// for tile/poly IDs on maps with many stacked walkable layers.
-	if m.saltBits < 7 {
+	// Static navmeshes do not recycle tile references at runtime. Six salt bits
+	// are sufficient for those meshes and preserve an additional bit for
+	// tile/poly IDs on maps with many stacked walkable layers.
+	if m.saltBits < 6 {
 		return Status(Failure | InvalidParam)
 	}
 

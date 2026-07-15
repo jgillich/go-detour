@@ -2,19 +2,19 @@ package detour
 
 import "testing"
 
-func TestInitAcceptsSevenSaltBitsForStaticMesh(t *testing.T) {
+func TestInitAcceptsSixSaltBitsForStaticMesh(t *testing.T) {
 	var mesh NavMesh
-	status := mesh.Init(&NavMeshParams{MaxTiles: 1 << 16, MaxPolys: 1 << 9})
+	status := mesh.Init(&NavMeshParams{MaxTiles: 1 << 14, MaxPolys: 1 << 12})
 	if StatusFailed(status) {
-		t.Fatalf("Init failed with seven salt bits: status=0x%x", status)
+		t.Fatalf("Init failed with six salt bits: status=0x%x", status)
 	}
 }
 
-func TestInitRejectsSixSaltBits(t *testing.T) {
+func TestInitRejectsFiveSaltBits(t *testing.T) {
 	var mesh NavMesh
-	status := mesh.Init(&NavMeshParams{MaxTiles: 1 << 16, MaxPolys: 1 << 10})
+	status := mesh.Init(&NavMeshParams{MaxTiles: 1 << 16, MaxPolys: 1 << 11})
 	if !StatusFailed(status) {
-		t.Fatalf("Init succeeded with six salt bits: status=0x%x", status)
+		t.Fatalf("Init succeeded with five salt bits: status=0x%x", status)
 	}
 }
 
